@@ -1,0 +1,7 @@
+<%= link_to 'Home', root_path %>
+<% if current_user.present? %>
+ <%= link_to 'cerrar', destroy_user_session_path, method: :delete %>
+<% else %>
+ <%= link_to 'iniciar sesion', new_user_session_path %>
+ <%= link_to 'registrarse', new_user_registration_path %>
+<% end %>

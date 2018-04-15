@@ -1,0 +1,69 @@
+<h2>Sign up</h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+  <%= devise_error_messages! %>
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :address %>  <br>
+    <%= f.text_field :address%>
+    <%= link_to "#", class:"btn btn-primary", id: "get_location" do%>
+    <i class="fa fa-map-marker"> </i>
+    <% end %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password %>
+    <% if @minimum_password_length %>
+    <em>(<%= @minimum_password_length %> characters minimum)</em>
+    <% end %><br />
+    <%= f.password_field :password, autocomplete: "off" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "off" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Sign up" %>
+  </div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+
+<script>
+  $("#get_location").on('click', function(event){
+    event.preventDefault();
+    $(this).html('<i class="fa fa-spinner fa-spin"> </i>')
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(getAddress);
+    }
+    else {
+      $('body').append("Geolocation is not supported by this browser.");
+    }
+  })
+
+  function getAddress(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    $.ajax({
+      url: '<%= locations_find_address_path %>',
+      type: 'GET',
+      dataType: 'json',
+      data: {latitude: latitude, longitude: longitude}
+    })
+      .done(function(data){
+        console.log(data);
+        $('#user_address').val(data);
+    })
+      .always(function(data){
+        $("#get_location").html('<i class="fa fa-map-marker"> </i>');
+    });
+  };
+
+</script>
